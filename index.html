@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Komnata Developerow | Klikacz Ultimate</title>
+<style>
+* {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #050508;
+    background-image: radial-gradient(circle at 25% 20%, #0a0a12 0%, #020205 100%);
+    color: #ececf4;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+    position: relative;
+}
+
+#timer {
+    position: fixed;
+    top: 22px;
+    left: 28px;
+    font-size: 72px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff, #a0a0c8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(0,0,0,0.5);
+    letter-spacing: 4px;
+    z-index: 10;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#mode {
+    position: fixed;
+    top: 105px;
+    left: 28px;
+    font-size: 16px;
+    font-weight: 500;
+    background: rgba(10,10,18,0.85);
+    backdrop-filter: blur(12px);
+    padding: 6px 20px;
+    border-radius: 40px;
+    border-left: 3px solid #9090b8;
+    color: #c0c0e8;
+    z-index: 10;
+}
+
+#counter {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 190px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffffff, #b8b8e0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 35px rgba(255,255,240,0.2);
+    letter-spacing: 8px;
+    z-index: 5;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#info {
+    position: fixed;
+    top: 65%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 500;
+    background: rgba(0,0,0,0.7);
+    padding: 10px 28px;
+    border-radius: 60px;
+    backdrop-filter: blur(14px);
+    border: 1px solid #3a3a58;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
+
+#gear {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    font-size: 36px;
+    cursor: pointer;
+    user-select: none;
+    z-index: 200;
+    background: rgba(0,0,0,0.6);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+    border: 1px solid #5a5a80;
+    font-weight: 400;
+}
+
+#gear:hover {
+    transform: rotate(40deg) scale(1.08);
+    background: #2a2a3c;
+    border-color: #c0c0e8;
+}
+
+#menu {
+    position: fixed;
+    top: 95px;
+    right: 24px;
+    width: 380px;
+    background: #0c0c16f5;
+    backdrop-filter: blur(24px);
+    border-radius: 36px;
+    padding: 22px 24px;
+    display: none;
+    z-index: 150;
+    border: 1px solid #4a4a70;
+    box-shadow: 0 30px 50px rgba(0,0,0,0.8);
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+#menu h3 {
+    margin: 8px 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #eaeaff;
+    border-left: 3px solid #a0a0d8;
+    padding-left: 12px;
+    letter-spacing: 0.5px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+#menu button {
+    background: #202032;
+    border: none;
+    color: #f0f0fc;
+    padding: 8px 18px;
+    border-radius: 44px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.07s linear;
+    font-family: inherit;
+}
+
+#menu button:active {
+    transform: scale(0.94);
+    background: #3a3a5a;
+}
+
+.time-tab-buttons {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 10px;
+    flex-wrap: wrap;
+}
+
+.time-tab-btn {
+    background: #1a1a2a;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+}
+
+.time-tab-btn.active-tab {
+    background: #4a4a7a;
+    box-shadow: 0 0 6px #9090c0;
+}
+
+#leaderboardContainer {
+    background: #0f0f1ce6;
+    margin-top: 16px;
+    padding: 12px 12px;
+    border-radius: 28px;
+    max-height: 360px;
+    overflow-y: auto;
+    backdrop-filter: blur(8px);
+    border: 1px solid #3a3a60;
+}
+
+#leaderboardTitle {
+    text-align: center;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #e0e0ff;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.record-line {
+    padding: 8px 10px;
+    border-bottom: 1px solid #2a2a48;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    transition: all 0.1s;
+}
+
+.record-rank {
+    font-weight: bold;
+    color: #c0c0f0;
+    min-width: 38px;
+}
+
+.record-name {
+    font-weight: 600;
+    color: #ddd;
+    flex: 2;
+    text-align: left;
+    margin-left: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.record-score {
+    font-weight: 800;
+    color: #FFD966;
+    text-align: right;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+.new-highlight {
+    animation: rowFlash 0.8s ease-out;
+    background: rgba(255, 200, 80, 0.3);
+    border-radius: 20px;
+}
+
+@keyframes rowFlash {
+    0% { background-color: rgba(255, 200, 80, 0.6); }
+    70% { background-color: rgba(255, 200, 80, 0.1); }
+    100% { background-color: transparent; }
+}
+
+#cursor {
+    position: fixed;
+    width: 28px;
+    height: 28px;
+    background: #ff5e5e;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    transition: width 0.08s, height 0.08s, background 0.12s, border-radius 0.1s;
+    box-shadow: 0 0 18px rgba(255, 70, 70, 0.7);
+    will-change: left, top;
+}
+
+.click-flash {
+    animation: screenFlash 0.12s ease-out;
+}
+
+@keyframes screenFlash {
+    0% { background-color: rgba(210, 210, 255, 0.12); }
+    100% { background-color: transparent; }
+}
+
+.float-number {
+    position: fixed;
+    pointer-events: none;
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff, #d0d0ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    z-index: 10000;
+    animation: floatUp 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    font-family: monospace;
+    text-shadow: 0 0 6px rgba(255,255,200,0.5);
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0px) scale(0.7);}
+    60% { opacity: 0.9; }
+    100% { opacity: 0; transform: translateY(-85px) scale(1.2);}
+}
+
+.nick-prompt-overlay {
+    position: fixed;
+    inset: 0;
+    background: #030308ee;
+    backdrop-filter: blur(20px);
+    z-index: 30000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.nick-prompt-card {
+    background: #0f0f1c;
+    border-radius: 56px;
+    padding: 36px 32px;
+    width: 340px;
+    text-align: center;
+    border: 1px solid #5a5a88;
+    box-shadow: 0 30px 55px black;
+}
+
+.nick-prompt-card h2 {
+    margin-bottom: 24px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.nick-prompt-card input {
+    width: 100%;
+    background: #1e1e2e;
+    border: 1px solid #6a6a90;
+    padding: 14px 18px;
+    border-radius: 60px;
+    color: white;
+    font-size: 1.1rem;
+    text-align: center;
+    font-family: monospace;
+    outline: none;
+    margin-bottom: 24px;
+}
+
+.nick-prompt-card button {
+    background: #3a3a60;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 60px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+@media (max-width: 720px) {
+    #counter { font-size: 90px; letter-spacing: 3px; top: 43%; }
+    #info { font-size: 15px; top: 59%; padding: 6px 18px;}
+    #timer { font-size: 48px; left: 18px; top: 12px; }
+    #mode { top: 78px; left: 18px; font-size: 12px; }
+    #menu { width: 310px; right: 12px; top: 85px; padding: 16px; max-height: 80vh; }
+    #gear { width: 48px; height: 48px; font-size: 30px; }
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    background: #111;
+}
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+}
+</style>
+</head>
+<body>
+
+<div id="timer">60</div>
+<div id="mode">Tryb: 1 minuta</div>
+<div id="gear">⚙️</div>
+
+<div id="menu">
+    <h3>KOLOR KURSORA</h3>
+    <div class="menu-buttons">
+        <button onclick="setCursorColor('#ff5e5e')">Czerwony</button>
+        <button onclick="setCursorColor('#5eff5e')">Zielony</button>
+        <button onclick="setCursorColor('#5e9eff')">Niebieski</button>
+        <button onclick="setCursorColor('#FFD966')">Złoty</button>
+        <button onclick="setCursorColor('#ffffff')">Biały</button>
+        <button onclick="setCursorColor('#c084fc')">Fiolet</button>
+    </div>
+    
+    <h3>KSZTAŁT KURSORA</h3>
+    <div class="menu-buttons">
+        <button onclick="setCursorShape('circle')">Koło</button>
+        <button onclick="setCursorShape('square')">Kwadrat</button>
+        <button onclick="setCursorShape('cross')">Celownik</button>
+        <button onclick="setCursorShape('ring')">Pierścień</button>
+    </div>
+    
+    <h3>CZAS GRY</h3>
+    <div class="menu-buttons">
+        <button onclick="setGameTime(10)">10s</button>
+        <button onclick="setGameTime(30)">30s</button>
+        <button onclick="setGameTime(60)">1m</button>
+        <button onclick="setGameTime(180)">3m</button>
+        <button onclick="setGameTime(600)">10m</button>
+        <button onclick="setGameTime(3600)">1h</button>
+    </div>
+    
+    <h3 style="margin-top: 16px;">TABELA WYNIKOW</h3>
+    <div class="time-tab-buttons" id="timeTabContainer"></div>
+    <div id="leaderboardContainer">
+        <div id="leaderboardTitle">WYBIERZ TRYB</div>
+        <div id="leaderboardList">BRAK DANYCH</div>
+    </div>
+</div>
+
+<div id="counter">0</div>
+<div id="info">Wczytywanie...</div>
+<div id="cursor"></div>
+
+<script>
+let currentScore = 0;
+let selectedTimeSec = 60;
+let timeRemaining = 60;
+let gameActiveFlag = false;
+let timerIntervalId = null;
+let playerNick = "";
+
+const timerElement = document.getElementById("timer");
+const modeElement = document.getElementById("mode");
+const counterElement = document.getElementById("counter");
+const gearButton = document.getElementById("gear");
+const menuPanel = document.getElementById("menu");
+const cursorDiv = document.getElementById("cursor");
+const infoDiv = document.getElementById("info");
+
+let globalScores = {};
+
+function loadAllScores() {
+    const stored = localStorage.getItem("KomnataDeveloperow_Scores");
+    if(stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            if(typeof parsed === 'object' && parsed !== null) {
+                globalScores = parsed;
+            } else {
+                globalScores = {};
+            }
+        } catch(e) { globalScores = {}; }
+    }
+    if(Object.keys(globalScores).length === 0) {
+        const timeModes = [10,30,60,180,600,3600];
+        timeModes.forEach(sec => {
+            globalScores[sec] = [];
+        });
+    }
+    for(let sec in globalScores) {
+        if(Array.isArray(globalScores[sec])) {
+            globalScores[sec].sort((a,b) => b.points - a.points);
+            if(globalScores[sec].length > 50) globalScores[sec] = globalScores[sec].slice(0,50);
+        } else {
+            globalScores[sec] = [];
+        }
+    }
+}
+
+function saveAllScores() {
+    localStorage.setItem("KomnataDeveloperow_Scores", JSON.stringify(globalScores));
+}
+
+function addScoreToMode(seconds, nick, points) {
+    if(!globalScores[seconds]) globalScores[seconds] = [];
+    const newEntry = {
+        nick: nick.substring(0, 16),
+        points: points,
+        timestamp: Date.now()
+    };
+    globalScores[seconds].push(newEntry);
+    globalScores[seconds].sort((a,b) => b.points - a.points);
+    if(globalScores[seconds].length > 50) globalScores[seconds] = globalScores[seconds].slice(0,50);
+    saveAllScores();
+    return globalScores[seconds];
+}
+
+function getModeText(sec) {
+    if(sec === 10) return "10s";
+    if(sec === 30) return "30s";
+    if(sec === 60) return "1m";
+    if(sec === 180) return "3m";
+    if(sec === 600) return "10m";
+    if(sec === 3600) return "1h";
+    return sec+"s";
+}
+
+function updateUI() {
+    timerElement.textContent = timeRemaining;
+    modeElement.textContent = `Tryb: ${getModeText(selectedTimeSec)}`;
+    counterElement.textContent = currentScore;
+}
+
+function stopTimerAndFinish() {
+    if(timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+    }
+    if(gameActiveFlag) {
+        gameActiveFlag = false;
+        const finalNick = playerNick.trim() === "" ? "ANONIM" : playerNick.trim();
+        addScoreToMode(selectedTimeSec, finalNick, currentScore);
+        showGameOverlay();
+        renderLeaderboardForCurrentTime();
+    }
+}
+
+function showGameOverlay() {
+    const currentModeScores = globalScores[selectedTimeSec] || [];
+    const sorted = [...currentModeScores];
+    sorted.sort((a,b) => b.points - a.points);
+    const topListHtml = sorted.slice(0,10).map((rec, idx) => {
+        return `
+            <div style="display: flex; justify-content: space-between; padding: 9px 14px; border-bottom: 1px solid #2a2a4a;">
+                <span style="font-weight: bold; width: 50px;">${idx+1}.</span>
+                <span style="flex: 2; text-align: left; font-weight: 500;">${escapeHtml(rec.nick)}</span>
+                <span style="font-weight: 800; color:#FFD966;">${rec.points}</span>
+            </div>
+        `;
+    }).join('');
+    
+    const overlayDiv = document.createElement('div');
+    overlayDiv.id = "finalOverlayLayer";
+    overlayDiv.style.cssText = "position:fixed; inset:0; background:#030308f5; backdrop-filter:blur(24px); z-index:20000; display:flex; align-items:center; justify-content:center; font-family:'Inter',sans-serif; padding:20px;";
+    overlayDiv.innerHTML = `
+        <div style="background:#0c0c18; border-radius:64px; max-width:560px; width:100%; padding:36px 28px; text-align:center; border:1px solid #6a6a90; box-shadow:0 30px 55px black;">
+            <div style="font-size:1.8rem; font-weight:700;">WYNIK</div>
+            <div style="font-size:6rem; font-weight:900; margin:16px 0 6px; background:linear-gradient(135deg,#fff,#c0c0ec); background-clip:text; -webkit-background-clip:text; color:transparent;">${currentScore}</div>
+            <div style="font-size:1.1rem; margin-bottom:28px; color:#bbb;">${getModeText(selectedTimeSec)} | ${playerNick}</div>
+            <div style="background:#10101e; border-radius:48px; padding:18px; margin:8px 0 24px;">
+                <div style="font-weight:700; margin-bottom:14px; font-size:1.2rem;">TOP 10 - ${getModeText(selectedTimeSec)}</div>
+                <div style="max-height:320px; overflow-y:auto;">${topListHtml || '<div style="padding:20px;">BRAK WYNIKOW</div>'}</div>
+            </div>
+            <button onclick="restartGameFromOverlay()" style="background:#2a2a42; border:none; padding:14px 44px; font-size:1.2rem; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">NOWA GRA</button>
+        </div>
+    `;
+    document.body.appendChild(overlayDiv);
+    cursorDiv.style.opacity = "0";
+}
+
+window.restartGameFromOverlay = function() {
+    const ov = document.getElementById("finalOverlayLayer");
+    if(ov) ov.remove();
+    cursorDiv.style.opacity = "1";
+    fullGameReset();
+};
+
+function fullGameReset() {
+    if(timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+    }
+    gameActiveFlag = false;
+    currentScore = 0;
+    timeRemaining = selectedTimeSec;
+    updateUI();
+    infoDiv.textContent = `Kliknij aby rozpocząc`;
+    cursorDiv.style.opacity = "1";
+}
+
+function startGameTimer() {
+    if(timerIntervalId) clearInterval(timerIntervalId);
+    timerIntervalId = setInterval(() => {
+        if(timeRemaining <= 1) {
+            if(timerIntervalId) clearInterval(timerIntervalId);
+            timerIntervalId = null;
+            timeRemaining = 0;
+            timerElement.textContent = "0";
+            stopTimerAndFinish();
+        } else {
+            timeRemaining--;
+            timerElement.textContent = timeRemaining;
+        }
+    }, 1000);
+}
+
+function initiateGame() {
+    if(gameActiveFlag) return;
+    gameActiveFlag = true;
+    startGameTimer();
+    infoDiv.textContent = "KLIKAJ!";
+}
+
+function handleClick(e) {
+    if(e.target.closest && (e.target.closest('#menu') || e.target.id === 'gear')) return;
+    if(timeRemaining <= 0) return;
+    
+    if(!gameActiveFlag) {
+        initiateGame();
+    }
+    
+    currentScore++;
+    counterElement.textContent = currentScore;
+    
+    document.body.classList.add('click-flash');
+    setTimeout(() => document.body.classList.remove('click-flash'), 110);
+    
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if(clientX === undefined && e.touches) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    if(clientX && clientY) {
+        const floatDiv = document.createElement('div');
+        floatDiv.className = 'float-number';
+        floatDiv.innerText = '+1';
+        floatDiv.style.left = (clientX - 20) + 'px';
+        floatDiv.style.top = (clientY - 25) + 'px';
+        document.body.appendChild(floatDiv);
+        setTimeout(() => floatDiv.remove(), 700);
+    } else {
+        const rect = cursorDiv.getBoundingClientRect();
+        const fx = document.createElement('div');
+        fx.className = 'float-number';
+        fx.innerText = '+1';
+        fx.style.left = (rect.left + 12) + 'px';
+        fx.style.top = (rect.top + 12) + 'px';
+        document.body.appendChild(fx);
+        setTimeout(() => fx.remove(), 700);
+    }
+    
+    cursorDiv.style.transform = "translate(-50%, -50%) scale(0.82)";
+    setTimeout(() => cursorDiv.style.transform = "translate(-50%, -50%) scale(1)", 100);
+}
+
+function setGameTime(seconds) {
+    if(gameActiveFlag) {
+        alert("Nie mozna zmienic czasu podczas gry.");
+        return;
+    }
+    selectedTimeSec = seconds;
+    timeRemaining = seconds;
+    currentScore = 0;
+    updateUI();
+    infoDiv.textContent = `Kliknij aby rozpocząc`;
+    if(timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+    }
+    gameActiveFlag = false;
+    renderLeaderboardForCurrentTime();
+    highlightActiveTab();
+}
+
+function setCursorColor(color) {
+    cursorDiv.style.background = color;
+    if(cursorDiv.style.border && cursorDiv.style.border.includes('solid')) {
+        cursorDiv.style.borderColor = color;
+    }
+}
+
+function setCursorShape(shape) {
+    if(shape === 'circle') {
+        cursorDiv.style.width = "28px";
+        cursorDiv.style.height = "28px";
+        cursorDiv.style.borderRadius = "50%";
+        cursorDiv.style.border = "none";
+        cursorDiv.style.background = cursorDiv.style.background || "#ff5e5e";
+    }
+    else if(shape === 'square') {
+        cursorDiv.style.width = "26px";
+        cursorDiv.style.height = "26px";
+        cursorDiv.style.borderRadius = "6px";
+        cursorDiv.style.border = "none";
+        cursorDiv.style.background = cursorDiv.style.background || "#ff5e5e";
+    }
+    else if(shape === 'cross') {
+        cursorDiv.style.width = "28px";
+        cursorDiv.style.height = "28px";
+        cursorDiv.style.background = "transparent";
+        cursorDiv.style.border = "2px solid #ffaa66";
+        cursorDiv.style.borderRadius = "0";
+        cursorDiv.style.boxShadow = "0 0 10px #ffaa66";
+    }
+    else if(shape === 'ring') {
+        cursorDiv.style.width = "30px";
+        cursorDiv.style.height = "30px";
+        cursorDiv.style.background = "transparent";
+        cursorDiv.style.border = "2.5px solid #e0e0ff";
+        cursorDiv.style.borderRadius = "50%";
+        cursorDiv.style.boxShadow = "0 0 8px #aaaaff";
+    }
+}
+
+function renderLeaderboardForCurrentTime() {
+    const scores = globalScores[selectedTimeSec] || [];
+    const sorted = [...scores];
+    sorted.sort((a,b) => b.points - a.points);
+    const container = document.getElementById("leaderboardList");
+    const title = document.getElementById("leaderboardTitle");
+    title.innerHTML = `TOP 50 - ${getModeText(selectedTimeSec)}`;
+    
+    if(sorted.length === 0) {
+        container.innerHTML = `<div style="padding:20px; text-align:center; color:#aaa;">BRAK WYNIKOW</div>`;
+        return;
+    }
+    let html = '';
+    sorted.slice(0,50).forEach((rec, idx) => {
+        html += `
+            <div class="record-line">
+                <span class="record-rank">${idx+1}.</span>
+                <span class="record-name">${escapeHtml(rec.nick)}</span>
+                <span class="record-score">${rec.points}</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function escapeHtml(str) {
+    if(!str) return "?";
+    return str.replace(/[&<>]/g, function(m) {
+        if(m === '&') return '&amp;';
+        if(m === '<') return '&lt;';
+        if(m === '>') return '&gt;';
+        return m;
+    });
+}
+
+function buildTimeTabs() {
+    const modes = [10,30,60,180,600,3600];
+    const container = document.getElementById("timeTabContainer");
+    container.innerHTML = '';
+    modes.forEach(sec => {
+        const btn = document.createElement('button');
+        btn.textContent = getModeText(sec);
+        btn.classList.add('time-tab-btn');
+        btn.onclick = () => {
+            if(gameActiveFlag) {
+                alert("Zakoncz gre przed zmiana trybu tablicy.");
+                return;
+            }
+            selectedTimeSec = sec;
+            timeRemaining = sec;
+            currentScore = 0;
+            updateUI();
+            renderLeaderboardForCurrentTime();
+            highlightActiveTab();
+            if(timerIntervalId) clearInterval(timerIntervalId);
+            gameActiveFlag = false;
+            infoDiv.textContent = `Kliknij aby rozpocząc`;
+        };
+        container.appendChild(btn);
+    });
+    highlightActiveTab();
+}
+
+function highlightActiveTab() {
+    const btns = document.querySelectorAll('.time-tab-btn');
+    const modesList = [10,30,60,180,600,3600];
+    btns.forEach((btn, idx) => {
+        if(modesList[idx] === selectedTimeSec) {
+            btn.classList.add('active-tab');
+        } else {
+            btn.classList.remove('active-tab');
+        }
+    });
+}
+
+function showNickPrompt() {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'nick-prompt-overlay';
+        overlay.innerHTML = `
+            <div class="nick-prompt-card">
+                <h2>KOMNATA DEVELOPEROW</h2>
+                <input type="text" id="nickInputPrompt" placeholder="TWOJA NAZWA" maxlength="16" autocomplete="off">
+                <button id="confirmNickBtn">ROZPOCZNIJ GRE</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        const input = overlay.querySelector('#nickInputPrompt');
+        const confirmBtn = overlay.querySelector('#confirmNickBtn');
+        const saveNick = () => {
+            let nick = input.value.trim();
+            if(nick === "") nick = "ANONIM";
+            playerNick = nick.substring(0, 16);
+            localStorage.setItem("KomnataDeveloperow_Nick", playerNick);
+            overlay.remove();
+            resolve(playerNick);
+        };
+        confirmBtn.onclick = saveNick;
+        input.onkeypress = (e) => { if(e.key === 'Enter') saveNick(); };
+        input.focus();
+    });
+}
+
+function initGame() {
+    loadAllScores();
+    buildTimeTabs();
+    setCursorColor('#ff5e5e');
+    setCursorShape('circle');
+    fullGameReset();
+    cursorDiv.style.display = "block";
+    renderLeaderboardForCurrentTime();
+    infoDiv.textContent = "Wpisz nick...";
+    const savedNick = localStorage.getItem("KomnataDeveloperow_Nick");
+    if(savedNick && savedNick.trim() !== "") {
+        playerNick = savedNick.trim();
+        infoDiv.textContent = `${playerNick} | Kliknij aby rozpocząc`;
+    } else {
+        showNickPrompt().then((nick) => {
+            playerNick = nick;
+            infoDiv.textContent = `${playerNick} | Kliknij aby rozpocząc`;
+        });
+    }
+}
+
+gearButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menuPanel.style.display = menuPanel.style.display === "block" ? "none" : "block";
+    if(menuPanel.style.display === "block") {
+        renderLeaderboardForCurrentTime();
+    }
+});
+
+document.addEventListener("click", (e) => {
+    if(e.target.closest && !e.target.closest('#menu') && e.target.id !== 'gear') {
+        if(menuPanel.style.display === "block") menuPanel.style.display = "none";
+    }
+});
+
+document.addEventListener("click", handleClick);
+document.addEventListener("touchstart", (e) => {
+    if(e.target.closest && (e.target.closest('#menu') || e.target.id === 'gear')) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleClick({ clientX: touch.clientX, clientY: touch.clientY });
+}, { passive: false });
+
+document.addEventListener("mousemove", (e) => {
+    cursorDiv.style.left = e.clientX + "px";
+    cursorDiv.style.top = e.clientY + "px";
+});
+
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+initGame();
+</script>
+</body>
+</html>
